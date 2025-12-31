@@ -5,10 +5,12 @@ import Stripe from "stripe"
 
 export async function POST(req: Request) {
   const body = await req.text()
-  const signature = headers().get("Stripe-Signature") as string
+  
+  const headerList = await headers()
+  const signature = headerList.get("Stripe-Signature") as string
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2025-12-15.clover", 
+    apiVersion: "2025-12-15.clover",
     typescript: true,
   })
 
