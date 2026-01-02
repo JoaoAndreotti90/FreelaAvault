@@ -9,8 +9,8 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 const loginSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().email("E-mail inválido"),
+  password: z.string().min(1, "A senha é obrigatória"),
 })
 
 type LoginInput = z.infer<typeof loginSchema>
@@ -36,7 +36,7 @@ export default function LoginPage() {
     })
 
     if (result?.error) {
-      setError("Invalid email or password")
+      setError("E-mail ou senha inválidos")
       return
     }
 
@@ -47,9 +47,19 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-md">
+        
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="bg-black rounded-lg p-1.5 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-5 h-5">
+              <path fillRule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .913-.143Z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <span className="text-2xl font-bold tracking-tight text-gray-900">FreelaVault</span>
+        </div>
+
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            Sign in to your account
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+            Entre na sua conta
           </h2>
         </div>
 
@@ -75,7 +85,7 @@ export default function LoginPage() {
               fill="#EA4335"
             />
           </svg>
-          Sign in with Google
+          Entrar com Google
         </button>
 
         <div className="relative">
@@ -83,7 +93,7 @@ export default function LoginPage() {
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-2 text-gray-500">Or continue with</span>
+            <span className="bg-white px-2 text-gray-500">Ou continue com</span>
           </div>
         </div>
 
@@ -95,7 +105,7 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">E-mail</label>
             <input
               type="email"
               {...register("email")}
@@ -104,7 +114,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block text-sm font-medium text-gray-700">Senha</label>
             <input
               type="password"
               {...register("password")}
@@ -117,12 +127,12 @@ export default function LoginPage() {
             disabled={isSubmitting}
             className="flex w-full justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none disabled:opacity-50"
           >
-            {isSubmitting ? "Signing in..." : "Sign in"}
+            {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
 
           <div className="text-center text-sm">
             <Link href="/register" className="font-medium text-black hover:underline">
-              Don&apos;t have an account? Sign up
+              Não tem uma conta? Cadastre-se
             </Link>
           </div>
         </form>

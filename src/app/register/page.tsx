@@ -37,7 +37,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-md">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            Create an account
+            Crie uma conta
           </h2>
         </div>
 
@@ -50,7 +50,7 @@ export default function RegisterPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Name
+              Nome
             </label>
             <input
               type="text"
@@ -78,7 +78,7 @@ export default function RegisterPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Password
+              Senha
             </label>
             <input
               type="password"
@@ -97,12 +97,12 @@ export default function RegisterPage() {
             disabled={isSubmitting}
             className="flex w-full justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none disabled:opacity-50"
           >
-            {isSubmitting ? "Creating..." : "Sign up"}
+            {isSubmitting ? "Criando..." : "Cadastrar"}
           </button>
 
           <div className="text-center text-sm">
             <Link href="/api/auth/signin" className="font-medium text-black hover:underline">
-              Already have an account? Sign in
+              Já tem uma conta? Iniciar sessão
             </Link>
           </div>
         </form>

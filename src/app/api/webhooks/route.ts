@@ -23,15 +23,17 @@ export async function POST(req: Request) {
       process.env.STRIPE_WEBHOOK_SECRET!
     )
   } catch (error) {
-    return new NextResponse("Webhook Error", { status: 400 })
+    return new NextResponse("Erro no Webhook", { status: 400 })
   }
 
   const session = event.data.object as Stripe.Checkout.Session
 
   if (event.type === "checkout.session.completed") {
     if (!session?.metadata?.userId || !session?.metadata?.projectId) {
-      return new NextResponse("Webhook Error: Missing Metadata", { status: 400 })
+      return new NextResponse("Erro no Webhook: Metadados ausentes", { status: 400 })
     }
+
+    const amountPaid = (session.amount_total || 0) / 100
 
     await db.purchase.create({
       data: {
@@ -39,6 +41,7 @@ export async function POST(req: Request) {
         projectId: session.metadata.projectId,
         stripeSessionId: session.id,
         status: "PAID",
+        pricePaid: amountPaid,
       },
     })
   }

@@ -8,7 +8,7 @@ export async function registerUser(data: RegisterInput) {
   const result = registerSchema.safeParse(data)
 
   if (!result.success) {
-    return { success: false, error: "Invalid data" }
+    return { success: false, error: "Dados inválidos" }
   }
 
   const { name, email, password } = result.data
@@ -18,7 +18,7 @@ export async function registerUser(data: RegisterInput) {
   })
 
   if (existingUser) {
-    return { success: false, error: "User already exists" }
+    return { success: false, error: "Este e-mail já está cadastrado" }
   }
 
   const hashedPassword = await hash(password, 10)
