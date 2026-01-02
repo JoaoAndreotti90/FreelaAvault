@@ -142,5 +142,4 @@ export default async function Home({ searchParams }: { searchParams: { query?: s
       </div>
     </main>
   )
-  
 }
