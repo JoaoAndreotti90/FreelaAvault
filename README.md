@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🚀 FreelaVault - Marketplace de Códigos
+O FreelaVault é uma plataforma completa para desenvolvedores venderem e comprarem projetos de código-fonte de forma segura. O sistema conta com gestão de arquivos, pagamentos automatizados e avaliações reais.
+<img width="1919" height="941" alt="Screenshot 2026-01-02 115659" src="https://github.com/user-attachments/assets/6e5eee45-3653-44e9-ba48-99ca1a54cb78" />
 
-## Getting Started
+🔗 Link do Projeto
+https://free-lavault.vercel.app/
 
-First, run the development server:
+🛠️ Tecnologias Utilizadas
+Framework: Next.js 15 (App Router)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Linguagem: TypeScript
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Banco de Dados: PostgreSQL (via Prisma ORM)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Pagamentos: Stripe API (Checkout e Webhooks)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Autenticação: NextAuth.js
 
-## Learn More
+Armazenamento de Arquivos: Vercel Blob
 
-To learn more about Next.js, take a look at the following resources:
+Estilização: Tailwind CSS e Lucide Icons
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🌟 Principais Funcionalidades
+Sistema de Vendas: Upload de arquivos (.zip) e imagens de capa com limites de tamanho validados no servidor.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Checkout Seguro: Integração com Stripe para processamento de pagamentos.
 
-## Deploy on Vercel
+Área do Comprador: Página "Minhas Compras" com acesso imediato ao download após aprovação.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Painel do Vendedor: Gestão de produtos, permitindo editar descrições, preços e substituir arquivos.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Avaliações Inteligentes: Sistema de reviews que permite comentários apenas para usuários que realmente adquiriram o produto.
+
+Segurança de Dados: Deleção em cascata (se o vendedor sai, o produto sai da loja, mas o comprador mantém o acesso).
+
+🚀 Como rodar o projeto localmente
+Clone o repositório: git clone https://github.com/seu-usuario/freela-vault.git
+
+Instale as dependências: npm install
+
+Configure as variáveis de ambiente no arquivo .env (Stripe, Database, NextAuth).
+
+Sincronize o banco de dados: npx prisma db push
+
+Inicie o servidor: npm run dev
