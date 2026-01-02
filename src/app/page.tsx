@@ -20,8 +20,6 @@ export default async function Home({
   const { query } = await searchParams
   const searchTerm = query || ""
 
-  // FILTRO 1: BANCO DE DADOS
-  // Traz apenas projetos que tenham dono (freelancerId não é nulo)
   const projects = await db.project.findMany({
     where: {
       AND: [
@@ -34,6 +32,15 @@ export default async function Home({
         {
           freelancerId: {
             not: null 
+          }
+        },
+        // --- AQUI ESTÁ A SOLUÇÃO MÁGICA ---
+        // Se o nome do dono for "Usuário Excluído", o projeto NÃO vem do banco.
+        {
+          freelancer: {
+            name: {
+              not: "Usuário Excluído"
+            }
           }
         }
       ]
@@ -70,9 +77,8 @@ export default async function Home({
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {projects.map((project) => {
-            // FILTRO 2: JAVASCRIPT (Segurança extra)
-            // Se não tiver freelancer, retorna null (o card não é desenhado na tela)
-            if (!project.freelancer) return null;
+            // Garantia extra (embora o banco já filtre)
+            if (!project.freelancer || project.freelancer.name === "Usuário Excluído") return null;
 
             const isOwner = userId === project.freelancerId
 
@@ -107,7 +113,6 @@ export default async function Home({
                     </p>
                   </div>
                   
-                  {/* AQUI ESTÁ A MUDANÇA PARA O SEU TESTE */}
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
                     <span>Vendedor: {project.freelancer.name}</span>
                   </div>
@@ -142,8 +147,7 @@ export default async function Home({
           })}
         </div>
 
-        {/* Mensagem se não houver projetos visíveis */}
-        {projects.filter(p => p.freelancer).length === 0 && (
+        {projects.length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
             <h3 className="text-lg font-medium text-gray-900">Nenhum projeto encontrado</h3>
           </div>
