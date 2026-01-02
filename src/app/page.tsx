@@ -34,8 +34,7 @@ export default async function Home({
             not: null 
           }
         },
-        // --- AQUI ESTÁ A SOLUÇÃO MÁGICA ---
-        // Se o nome do dono for "Usuário Excluído", o projeto NÃO vem do banco.
+
         {
           freelancer: {
             name: {
@@ -77,7 +76,6 @@ export default async function Home({
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {projects.map((project) => {
-            // Garantia extra (embora o banco já filtre)
             if (!project.freelancer || project.freelancer.name === "Usuário Excluído") return null;
 
             const isOwner = userId === project.freelancerId
