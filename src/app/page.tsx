@@ -20,21 +20,27 @@ export default async function Home({
   const { query } = await searchParams
   const searchTerm = query || ""
 
-  // Buscamos todos os projetos
+  // TRAVA DE SEGURANÇA:
+  // "freelancerId: { not: null }" obriga o banco a trazer apenas projetos com dono.
   const projects = await db.project.findMany({
     where: {
-      name: {
-        contains: searchTerm,
-        mode: "insensitive",
-      },
+      AND: [
+        {
+          name: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          freelancerId: {
+            not: null 
+          }
+        }
+      ]
     },
     orderBy: { createdAt: "desc" },
     include: { freelancer: true },
   })
-
-  // AQUI É O PULO DO GATO:
-  // Filtramos via código. Se não tiver freelancer (null), o projeto nem entra na lista final.
-  const activeProjects = projects.filter((project) => project.freelancer !== null)
 
   return (
     <main className="min-h-screen bg-gray-50/50">
@@ -63,10 +69,11 @@ export default async function Home({
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {activeProjects.map((project) => {
+          {projects.map((project) => {
             const isOwner = userId === project.freelancerId
-            // Como filtramos antes, o TypeScript sabe que freelancer existe aqui
-            const freelancerName = project.freelancer!.name 
+
+            // Verificação dupla: se por milagre o banco falhar, o React não renderiza o card
+            if (!project.freelancer) return null
 
             return (
               <div key={project.id} className="group relative flex flex-col overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
@@ -100,7 +107,7 @@ export default async function Home({
                   </div>
                   
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    <span>Por {freelancerName}</span>
+                    <span>Por {project.freelancer.name}</span>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-50">
@@ -133,7 +140,7 @@ export default async function Home({
           })}
         </div>
 
-        {activeProjects.length === 0 && (
+        {projects.length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
             <h3 className="text-lg font-medium text-gray-900">Nenhum projeto encontrado</h3>
           </div>
