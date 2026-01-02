@@ -34,7 +34,6 @@ export default async function Home({
             not: null 
           }
         },
-
         {
           freelancer: {
             name: {
@@ -67,7 +66,7 @@ export default async function Home({
             <SearchBar />
             <Link
               href="/upload"
-              className="flex items-center justify-center gap-2 rounded-full bg-black px-6 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800"
+              className="flex items-center justify-center gap-2 rounded-full bg-black px-6 py-2.5 text-sm font-medium text-white text-center transition hover:bg-gray-800"
             >
               Vender Código
             </Link>
