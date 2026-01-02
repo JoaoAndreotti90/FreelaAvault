@@ -1,4 +1,4 @@
-=import { db } from "@/lib/db"
+import { db } from "@/lib/db"
 import Navbar from "@/components/Navbar"
 import Link from "next/link"
 import { buyProject } from "@/actions/checkout"
