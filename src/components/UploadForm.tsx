@@ -22,7 +22,7 @@ export default function UploadForm() {
         router.refresh()
       }
     } catch (error: any) {
-      toast.error("Ocorreu um erro inesperado. Verifique o tamanho do arquivo.")
+      toast.error(error.message || "Erro de conexão.")
     } finally {
       setLoading(false)
     }
@@ -67,7 +67,7 @@ export default function UploadForm() {
 
       <div className="space-y-2">
         <label className="block text-sm font-bold text-gray-900 uppercase tracking-wider">Imagem de Capa (Thumbnail)</label>
-        <p className="text-xs text-gray-500 mb-2">Essa é a imagem que aparecerá na vitrine. Use JPG ou PNG (Máx 4.5MB).</p>
+        <p className="text-xs text-gray-500 mb-2">Essa é a imagem que aparecerá na vitrine. Use JPG ou PNG.</p>
         <div className="flex items-center justify-center rounded-xl border-2 border-dashed border-gray-300 px-6 py-8 transition-colors hover:bg-gray-50 hover:border-gray-400">
           <div className="text-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="mx-auto h-10 w-10 text-gray-400">
@@ -116,7 +116,7 @@ export default function UploadForm() {
                 />
               </label>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Zip, Rar, PDF ou Code (Máx 4.5MB)</p>
+            <p className="text-xs text-gray-500 mt-2">Zip, Rar, PDF ou Code</p>
           </div>
         </div>
       </div>

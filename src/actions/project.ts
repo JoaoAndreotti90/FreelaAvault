@@ -56,9 +56,8 @@ export async function createProject(formData: FormData) {
 
     return { success: true }
 
-  } catch (error) {
-    console.error("Erro ao criar projeto:", error)
-    return { error: "Erro interno ao salvar o projeto. Tente novamente." }
+  } catch (error: any) {
+    return { error: error.message || "Erro desconhecido no servidor." }
   }
 }
 
@@ -75,8 +74,8 @@ export async function deleteProject(projectId: string) {
     revalidatePath("/")
     revalidatePath("/dashboard")
     return { success: true }
-  } catch (error) {
-    return { error: "Erro ao excluir o projeto." }
+  } catch (error: any) {
+    return { error: error.message || "Erro ao excluir o projeto." }
   }
 }
 
@@ -121,7 +120,7 @@ export async function updateProject(formData: FormData) {
     revalidatePath(`/project/${projectId}`)
     
     return { success: true }
-  } catch (error) {
-    return { error: "Erro ao atualizar o projeto." }
+  } catch (error: any) {
+    return { error: error.message || "Erro ao atualizar o projeto." }
   }
 }
