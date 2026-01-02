@@ -14,6 +14,10 @@ export async function createProject(formData: FormData) {
       return { error: "Você precisa estar logado para publicar." }
     }
 
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return { error: "Erro de Configuração: Token de Upload (Blob) não encontrado no servidor." }
+    }
+
     const mainFile = formData.get("file") as File
     const imageFile = formData.get("image") as File 
     const name = formData.get("name") as string
@@ -57,7 +61,7 @@ export async function createProject(formData: FormData) {
     return { success: true }
 
   } catch (error: any) {
-    return { error: error.message || "Erro desconhecido no servidor." }
+    return { error: `Erro no servidor: ${error.message}` }
   }
 }
 
@@ -96,6 +100,10 @@ export async function updateProject(formData: FormData) {
     let imageUrl = project.imageUrl
 
     if (imageFile && imageFile.size > 0) {
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        return { error: "Erro de Configuração: Token de Upload (Blob) não encontrado." }
+      }
+      
       if (imageFile.size > 4.5 * 1024 * 1024) {
         return { error: "A nova imagem é muito grande (Máx 4.5MB)." }
       }
