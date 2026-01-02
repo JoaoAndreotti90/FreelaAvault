@@ -7,7 +7,9 @@ import { authOptions } from "@/lib/auth"
 import SearchBar from "@/components/SearchBar"
 import Image from "next/image"
 
+// ISSO AQUI OBRIGA A PÁGINA A ATUALIZAR SEMPRE (MATA O CACHE)
 export const dynamic = "force-dynamic"
+export const revalidate = 0 
 
 export default async function Home({ 
   searchParams 
@@ -20,7 +22,6 @@ export default async function Home({
   const { query } = await searchParams
   const searchTerm = query || ""
 
-  // 1. Buscamos no banco apenas pelo NOME (sem filtro complexo que quebra o build)
   const projects = await db.project.findMany({
     where: {
       name: {
@@ -32,9 +33,11 @@ export default async function Home({
     include: { freelancer: true },
   })
 
-  // 2. FILTRAGEM MANUAL: Aqui removemos quem não tem freelancer (usuário excluído)
-  // Isso garante que activeProjects só tenha projetos válidos.
-  const activeProjects = projects.filter((project) => project.freelancer !== null)
+  // FILTRO REFORÇADO:
+  // Só aceita se tiver o objeto freelancer E se o freelancerId não for nulo
+  const activeProjects = projects.filter((project) => {
+    return project.freelancer && project.freelancerId !== null
+  })
 
   return (
     <main className="min-h-screen bg-gray-50/50">
@@ -63,7 +66,7 @@ export default async function Home({
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {/* Usamos activeProjects aqui, não projects */}
+          {/* IMPORTANTE: Aqui usamos o activeProjects */}
           {activeProjects.map((project) => {
             const isOwner = userId === project.freelancerId
 
@@ -99,8 +102,8 @@ export default async function Home({
                   </div>
                   
                   <div className="mt-4 flex items-center gap-2 text-xs font-medium text-gray-400">
-                    {/* Aqui usamos o operador ? para evitar erro caso algo passe despercebido */}
-                    <span>Por {project.freelancer?.name || "Vendedor"}</span>
+                    {/* Se passar pelo filtro, o freelancer.name existe com certeza */}
+                    <span>Por {project.freelancer?.name}</span>
                   </div>
                   
                   <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-50">
