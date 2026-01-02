@@ -62,10 +62,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">{project.name}</h1>
               <div className="mt-3 flex items-center gap-2">
                 <div className="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-600">
-                   {project.freelancer.name?.[0]?.toUpperCase() || "V"}
+                   {project.freelancer?.name?.[0]?.toUpperCase() || "V"}
                 </div>
                 <Link href={`/u/${project.freelancerId}`} className="text-sm font-medium text-gray-600 hover:text-black hover:underline transition-colors">
-                  Vendido por {project.freelancer.name}
+                  Vendido por {project.freelancer?.name}
                 </Link>
               </div>
             </div>
