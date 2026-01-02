@@ -4,101 +4,124 @@ import { put } from "@vercel/blob"
 import { db } from "@/lib/db"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 
 export async function createProject(formData: FormData) {
-  const session = await getServerSession(authOptions)
-  
-  if (!session || !session.user?.id) {
-    redirect("/login")
-  }
+  try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session || !session.user?.id) {
+      return { error: "Você precisa estar logado para publicar." }
+    }
 
-  const mainFile = formData.get("file") as File
-  const imageFile = formData.get("image") as File 
+    const mainFile = formData.get("file") as File
+    const imageFile = formData.get("image") as File 
+    const name = formData.get("name") as string
+    const description = formData.get("description") as string
+    const price = formData.get("price") as string
 
-  const name = formData.get("name") as string
-  const description = formData.get("description") as string
-  const price = formData.get("price") as string
+    if (!mainFile || !imageFile || !name || !price) {
+      return { error: "Preencha todos os campos obrigatórios." }
+    }
 
-  if (!mainFile || !imageFile || !name || !price) {
-    throw new Error("Preencha todos os campos obrigatórios.")
-  }
+    const MAX_SIZE = 4.5 * 1024 * 1024 
+    if (mainFile.size > MAX_SIZE) {
+      return { error: "O arquivo do projeto é muito grande. O limite é 4.5MB." }
+    }
+    if (imageFile.size > MAX_SIZE) {
+      return { error: "A imagem de capa é muito grande. O limite é 4.5MB." }
+    }
 
-  const imageBlob = await put(`covers/${imageFile.name}`, imageFile, {
-    access: "public",
-  })
-
-  const fileBlob = await put(`projects/${mainFile.name}`, mainFile, {
-    access: "public",
-  })
-
-  await db.project.create({
-    data: {
-      name,
-      description,
-      price: Number(price),
-      fileUrl: fileBlob.url,
-      imageUrl: imageBlob.url, 
-      freelancerId: session.user.id,
-    },
-  })
-
-  revalidatePath("/")
-  revalidatePath("/dashboard")
-
-  return { success: true }
-}
-
-export async function deleteProject(projectId: string) {
-  const session = await getServerSession(authOptions)
-  if (!session || !session.user?.id) return { error: "Não autorizado." }
-  
-  const project = await db.project.findUnique({ where: { id: projectId } })
-  if (!project || project.freelancerId !== session.user.id) return { error: "Sem permissão." }
-  
-  await db.project.delete({ where: { id: projectId } })
-  
-  revalidatePath("/")
-  revalidatePath("/dashboard")
-  return { success: true }
-}
-
-export async function updateProject(formData: FormData) {
-  const session = await getServerSession(authOptions)
-  if (!session || !session.user?.id) return { error: "Não autorizado." }
-  
-  const projectId = formData.get("projectId") as string
-  const name = formData.get("name") as string
-  const description = formData.get("description") as string
-  const price = formData.get("price") as string
-  const imageFile = formData.get("image") as File
-
-  const project = await db.project.findUnique({ where: { id: projectId } })
-  if (!project || project.freelancerId !== session.user.id) return { error: "Sem permissão." }
-
-  let imageUrl = project.imageUrl
-
-  if (imageFile && imageFile.size > 0) {
     const imageBlob = await put(`covers/${imageFile.name}`, imageFile, {
       access: "public",
     })
-    imageUrl = imageBlob.url
+
+    const fileBlob = await put(`projects/${mainFile.name}`, mainFile, {
+      access: "public",
+    })
+
+    await db.project.create({
+      data: {
+        name,
+        description,
+        price: Number(price),
+        fileUrl: fileBlob.url,
+        imageUrl: imageBlob.url, 
+        freelancerId: session.user.id,
+      },
+    })
+
+    revalidatePath("/")
+    revalidatePath("/dashboard")
+
+    return { success: true }
+
+  } catch (error) {
+    console.error("Erro ao criar projeto:", error)
+    return { error: "Erro interno ao salvar o projeto. Tente novamente." }
   }
-  
-  await db.project.update({
-    where: { id: projectId },
-    data: { 
-      name, 
-      description, 
-      price: Number(price),
-      imageUrl: imageUrl
+}
+
+export async function deleteProject(projectId: string) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session || !session.user?.id) return { error: "Não autorizado." }
+    
+    const project = await db.project.findUnique({ where: { id: projectId } })
+    if (!project || project.freelancerId !== session.user.id) return { error: "Sem permissão." }
+    
+    await db.project.delete({ where: { id: projectId } })
+    
+    revalidatePath("/")
+    revalidatePath("/dashboard")
+    return { success: true }
+  } catch (error) {
+    return { error: "Erro ao excluir o projeto." }
+  }
+}
+
+export async function updateProject(formData: FormData) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session || !session.user?.id) return { error: "Não autorizado." }
+    
+    const projectId = formData.get("projectId") as string
+    const name = formData.get("name") as string
+    const description = formData.get("description") as string
+    const price = formData.get("price") as string
+    const imageFile = formData.get("image") as File
+
+    const project = await db.project.findUnique({ where: { id: projectId } })
+    if (!project || project.freelancerId !== session.user.id) return { error: "Sem permissão." }
+
+    let imageUrl = project.imageUrl
+
+    if (imageFile && imageFile.size > 0) {
+      if (imageFile.size > 4.5 * 1024 * 1024) {
+        return { error: "A nova imagem é muito grande (Máx 4.5MB)." }
+      }
+      const imageBlob = await put(`covers/${imageFile.name}`, imageFile, {
+        access: "public",
+      })
+      imageUrl = imageBlob.url
     }
-  })
-  
-  revalidatePath("/")
-  revalidatePath("/dashboard")
-  revalidatePath(`/project/${projectId}`)
-  
-  return { success: true }
+    
+    await db.project.update({
+      where: { id: projectId },
+      data: { 
+        name, 
+        description, 
+        price: Number(price),
+        imageUrl: imageUrl
+      }
+    })
+    
+    revalidatePath("/")
+    revalidatePath("/dashboard")
+    revalidatePath(`/project/${projectId}`)
+    
+    return { success: true }
+  } catch (error) {
+    return { error: "Erro ao atualizar o projeto." }
+  }
 }
